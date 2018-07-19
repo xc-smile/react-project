@@ -8,11 +8,11 @@ import {
   Radio,
   Button
 } from 'antd-mobile'
+import {connect} from "react-redux";
+import {Redirect} from "react-router-dom";
 
 import Logo from "../../components/logo/logo"
-
-
-
+import {register} from "../../redux/actions/actions";
 
 
 class Register extends Component{
@@ -22,6 +22,9 @@ class Register extends Component{
     password2: '',
     type: 'dashen'
   }
+  register = () => {
+    this.props.register(this.state)
+  }
   handlerChange = (name,value) => {
     this.setState({[name]:value})
   }
@@ -29,18 +32,23 @@ class Register extends Component{
     this.props.history.replace("/login")
   }
   render(){
+    const {redirectTo,msg} = this.props
+    if(redirectTo){
+      return <Redirect to={redirectTo}/>
+    }
     return(
       <div>
         <NavBar>注册</NavBar>
         <Logo />
         <WingBlank>
+          <p>{msg}</p>
         <List>
           <WhiteSpace/>
-          <InputItem placeholder="请输入用户名">用户名: </InputItem>
+          <InputItem placeholder="请输入用户名" onChange={(value) => {this.handlerChange("username",value)}}>用户名: </InputItem>
           <WhiteSpace/>
-          <InputItem type="password" placeholder="请输入密码">密码: </InputItem>
+          <InputItem type="password" placeholder="请输入密码" onChange={(value) => {this.handlerChange("password",value)}}>密码: </InputItem>
           <WhiteSpace/>
-          <InputItem type="password" placeholder="重新输入密码">确认密码: </InputItem>
+          <InputItem type="password" placeholder="重新输入密码" onChange={(value) => {this.handlerChange("password2",value)}}>确认密码: </InputItem>
           <WhiteSpace/>
           <List.Item>
             <span>用户类型: </span>&nbsp;&nbsp;
@@ -56,7 +64,7 @@ class Register extends Component{
             </Radio>
           </List.Item>
           <WhiteSpace/>
-          <Button type="primary">注册</Button>
+          <Button type="primary" onClick={this.register}>注册</Button>
           <Button onClick={this.toLogin}>已有账号</Button>
         </List>
         </WingBlank>
@@ -64,4 +72,7 @@ class Register extends Component{
     )
   }
 }
-export default Register;
+export default connect(
+  state => state.user,
+  {register}
+)(Register);

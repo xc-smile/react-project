@@ -1,18 +1,34 @@
 import {combineReducers} from 'redux'
-function xxx(preState=0,action) {
-  switch (action.type) {
-    default:
-      return preState;
-  }
+
+import {
+  AUTH_SUCCESS,
+  ERROR_MSG,
+  RECEIVE_USER,
+  RESET_USER
+} from "../action-type/action-type";
+import {getRedirectPath} from "../../utils"
+
+const initUser = {
+  username:"",
+  type:"",
+  msg:"",
+  redirectTo : ""
 }
-function yyy(preState={},action) {
-  switch(action.type){
-    default:
-      return preState;
+
+function user(state = initUser,action) {
+  switch (action.type) {
+    case AUTH_SUCCESS :
+      const redirectTo = getRedirectPath(action.data.type,action.data.header);
+      return {...action.data,redirectTo};
+    case ERROR_MSG :
+      return {...state,msg : action.data};
+    case RECEIVE_USER:
+      return action.data;
+    case RESET_USER:
+      return {...initUser,msg:action.data}
+    default :
+      return state;
   }
 }
 
-export default combineReducers({
-  xxx,
-  yyy
-})
+export default combineReducers({user})
